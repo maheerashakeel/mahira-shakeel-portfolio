@@ -38,14 +38,14 @@ float hash(vec2 q) { return fract(sin(dot(q, vec2(12.9898, 78.233))) * 43758.545
 
 void main() {
   vec2 uv = v;
-  float t = uTime;
+  float t = uTime * 1.5;
 
   // slow water-like drift, stronger while the page is moving
   vec2 w = vec2(
     sin(uv.y * 5. + t * .32) + .5 * sin(uv.y * 11. - t * .21),
     cos(uv.x * 4. - t * .27) + .5 * cos(uv.x * 9. + t * .17)
   );
-  uv += w * (.0042 + uFlow * .012);
+  uv += w * (.011 + uFlow * .012);
 
   // the photo bends around the pointer
   vec2 d = (v - uMouse) * vec2(uAspect, 1.);
@@ -230,8 +230,8 @@ export function createAmbient(canvas: HTMLCanvasElement, animate: boolean): Ambi
     const busy = index !== lastIndex || flowTarget > 0.01 || (!coarse && mouse.pressTarget > 0.05)
     lastIndex = index
     if (!busy && frame % 2) return
-    // no cursor on a phone: a slow invisible one keeps the photo moving between touches
-    if (coarse && performance.now() - touchedAt > 1500) {
+    // a slow invisible cursor keeps the photo moving on its own, on every device
+    if (performance.now() - touchedAt > 1500) {
       mouse.tx = 0.5 + Math.sin(time * 0.35) * 0.32
       mouse.ty = 0.5 + Math.cos(time * 0.27) * 0.3
       mouse.pressTarget = Math.max(mouse.pressTarget, 0.6)
