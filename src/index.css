@@ -987,3 +987,65 @@ svg[data-mood='excited'] {
   margin-top: 8px;
   font-size: var(--small);
 }
+
+/* ---------- Phones and tablets ---------- */
+.backdrop {
+  inset: 0 0 auto;
+  height: 100lvh;
+}
+@media (max-width: 899px) {
+  /* a soft veil keeps small text readable over the bright lights */
+  .backdrop::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: rgba(7, 7, 8, 0.44);
+  }
+  .hero__text p,
+  .proj__text p,
+  .about__me p,
+  .contact__say p {
+    color: rgba(244, 241, 234, 0.86);
+  }
+  .apps {
+    --app-w: min(62vw, calc((100svh - 300px) * 9 / 16));
+    min-height: auto;
+    padding-top: 72px;
+    padding-bottom: 56px;
+  }
+  .apps__arrows {
+    display: none;
+  }
+  .apps__row {
+    justify-content: flex-start;
+    gap: 20px;
+    padding-inline: calc((100vw - var(--app-w)) / 2);
+    scroll-padding-inline: calc((100vw - var(--app-w)) / 2);
+  }
+  .apps__row > li {
+    width: var(--app-w);
+    min-width: 0;
+    scroll-snap-align: center;
+  }
+  .demo {
+    width: 100vw;
+    max-height: 100svh;
+    margin: 0;
+    padding: 18px 20px 28px;
+    overflow-y: auto;
+  }
+  .demo .demo__phone {
+    width: min(76vw, calc((100svh - 120px) * 9 / 16));
+    max-width: none;
+  }
+  .demo__close {
+    position: fixed;
+    top: 14px;
+    right: 14px;
+    z-index: 2;
+  }
+  .buddy {
+    width: 46px;
+    height: 46px;
+  }
+}

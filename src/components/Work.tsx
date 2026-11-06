@@ -107,11 +107,10 @@ export function Work() {
       const triggers = panels.map((panel, i) =>
         ScrollTrigger.create({
           trigger: panel,
-          start: 'top 65%',
-          end: 'bottom 35%',
-          onToggle: self => {
-            if (self.isActive) setWorld(i + 1)
-          },
+          start: 'top bottom',
+          end: 'top 25%',
+          scrub: true,
+          onUpdate: self => setWorld(i + self.progress),
         }),
       )
       const videos = new IntersectionObserver(entries => {

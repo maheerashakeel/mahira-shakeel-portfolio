@@ -16,6 +16,7 @@ import { setFlow, setWorld } from './lib/ambient'
 import { appProjects, webProjects } from './lib/content'
 
 gsap.registerPlugin(ScrollTrigger)
+ScrollTrigger.config({ ignoreMobileResize: true })
 
 export default function App() {
   useEffect(() => {
@@ -31,6 +32,15 @@ export default function App() {
       gsap.ticker.add(tick)
       gsap.ticker.lagSmoothing(0)
     }
+
+    // touch scrolling is native, so the world reads its speed from the page itself
+    let lastY = window.scrollY
+    const onScroll = () => {
+      setFlow((window.scrollY - lastY) * 1.6)
+      lastY = window.scrollY
+    }
+    const touch = window.matchMedia('(pointer: coarse)').matches
+    if (touch) window.addEventListener('scroll', onScroll, { passive: true })
 
     const onAnchor = (e: MouseEvent) => {
       const a = (e.target as HTMLElement | null)?.closest<HTMLAnchorElement>('a[href^="#"]')
@@ -59,6 +69,7 @@ export default function App() {
     return () => {
       segments.forEach(s => s.kill())
       document.removeEventListener('click', onAnchor)
+      window.removeEventListener('scroll', onScroll)
       gsap.ticker.remove(tick)
       lenis?.destroy()
     }

@@ -6,7 +6,7 @@ import { useContent } from '../lib/content'
 import { onIntroDone } from '../lib/intro'
 
 const SIZE = 62
-const SIZE_SMALL = 50
+const SIZE_SMALL = 46
 const LEASH = 86 // how far it stays from the cursor, so it never covers what you are pointing at
 const TOP_LIMIT = 74
 
@@ -97,6 +97,7 @@ export function Buddy() {
     const restSpot = () => {
       const vh = window.innerHeight
       const s = size()
+      if (!finePointer && window.innerWidth < 900) return { x: window.innerWidth, y: vh * 0.64 }
       let best: { x: number; y: number } | null = null
       let bestDistance = Infinity
       document.querySelectorAll<HTMLElement>('[data-spot]').forEach(el => {
@@ -139,7 +140,8 @@ export function Buddy() {
       const s = size()
       const half = s / 2 + 8
       const t = target()
-      const tx = Math.min(vw - half, Math.max(half, t.x))
+      const edge = !finePointer && !spot.current ? s * 0.3 : half // on phones it peeks in from the side
+      const tx = Math.min(vw - edge, Math.max(half, t.x))
       const ty = Math.min(vh - half, Math.max(TOP_LIMIT + half, t.y))
 
       // scrolling drags it along with the page for a moment, then it catches up
@@ -240,7 +242,8 @@ export function Buddy() {
     let t: number | undefined
     const off = onIntroDone(() => {
       setReady(true)
-      t = window.setTimeout(() => say(buddy.greeting, 'happy', 6000), 1400)
+      // on a phone the greeting would cover the hero, so it only speaks when tapped
+      if (window.matchMedia('(pointer: fine)').matches) t = window.setTimeout(() => say(buddy.greeting, 'happy', 6000), 1400)
     })
     return () => {
       off()

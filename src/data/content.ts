@@ -219,6 +219,20 @@ export const defaultContent: SiteContent = {
       world: '/img/world/food-delivery.webp',
       frame: 'monitor',
     },
+    {
+      id: 'meowstream',
+      title: 'MeowStream',
+      summary:
+        'A movie discovery site. Browse popular, top rated, now playing and upcoming films, search by title, and see ratings pulled live from the TMDB API.',
+      credit: 'Personal project.',
+      stack: ['HTML', 'CSS', 'JavaScript', 'TMDB API'],
+      say: 'MeowStream is a movie browser built on the TMDB API, with categories, search and live ratings.',
+      mood: 'curious',
+      url: 'https://meow-stream.netlify.app/',
+      shot: '/img/work/meowstream.webp',
+      world: '/img/world/meowstream.webp',
+      frame: 'monitor',
+    },
   ],
   about: {
     heading: 'I like owning a feature from the database to the last pixel, then watching real people use it.',

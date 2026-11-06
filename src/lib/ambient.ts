@@ -104,6 +104,7 @@ export function setFlow(velocity: number) {
 }
 
 export function createAmbient(canvas: HTMLCanvasElement, animate: boolean): Ambient | null {
+  const coarse = window.matchMedia('(pointer: coarse)').matches
   const gl = canvas.getContext('webgl', { antialias: false, alpha: false, powerPreference: 'low-power' })
   if (!gl) return null
 
@@ -164,7 +165,11 @@ export function createAmbient(canvas: HTMLCanvasElement, animate: boolean): Ambi
     for (let i = 1; i < worlds.length; i++) await load(i)
   })
 
+  let lastWidth = 0
   const resize = () => {
+    // a phone's address bar changes the height while scrolling: ignore that, or the picture jumps
+    if (coarse && window.innerWidth === lastWidth) return
+    lastWidth = window.innerWidth
     // the image is soft, so about a million pixels looks the same as a full 4K canvas at a fraction of the cost
     const scale = Math.min(1, Math.sqrt(1_000_000 / (window.innerWidth * window.innerHeight)))
     const w = Math.round(window.innerWidth * scale)
@@ -183,10 +188,20 @@ export function createAmbient(canvas: HTMLCanvasElement, animate: boolean): Ambi
 
   const mouse = { x: 0.68, y: 0.55, tx: 0.68, ty: 0.55, press: 0, pressTarget: 0 }
   let flow = 0
+  let touchedAt = -10000
   const onMove = (e: PointerEvent) => {
     mouse.tx = e.clientX / window.innerWidth
     mouse.ty = 1 - e.clientY / window.innerHeight
     mouse.pressTarget = 1
+    touchedAt = performance.now()
+  }
+  const onTouch = (e: TouchEvent) => {
+    const t = e.touches[0]
+    if (!t) return
+    mouse.tx = t.clientX / window.innerWidth
+    mouse.ty = 1 - t.clientY / window.innerHeight
+    mouse.pressTarget = 1
+    touchedAt = performance.now()
   }
 
   const draw = (time: number) => {
@@ -212,9 +227,15 @@ export function createAmbient(canvas: HTMLCanvasElement, animate: boolean): Ambi
   const tick = (time: number) => {
     if (document.hidden || paused) return
     frame += 1
-    const busy = index !== lastIndex || flowTarget > 0.01 || mouse.pressTarget > 0.05
+    const busy = index !== lastIndex || flowTarget > 0.01 || (!coarse && mouse.pressTarget > 0.05)
     lastIndex = index
     if (!busy && frame % 2) return
+    // no cursor on a phone: a slow invisible one keeps the photo moving between touches
+    if (coarse && performance.now() - touchedAt > 1500) {
+      mouse.tx = 0.5 + Math.sin(time * 0.35) * 0.32
+      mouse.ty = 0.5 + Math.cos(time * 0.27) * 0.3
+      mouse.pressTarget = Math.max(mouse.pressTarget, 0.6)
+    }
     mouse.x += (mouse.tx - mouse.x) * 0.07
     mouse.y += (mouse.ty - mouse.y) * 0.07
     mouse.press += (mouse.pressTarget - mouse.press) * 0.05
@@ -229,6 +250,7 @@ export function createAmbient(canvas: HTMLCanvasElement, animate: boolean): Ambi
   window.addEventListener('resize', resize)
   if (animate) {
     window.addEventListener('pointermove', onMove, { passive: true })
+    window.addEventListener('touchmove', onTouch, { passive: true })
     gsap.ticker.add(tick)
   }
 
@@ -238,6 +260,7 @@ export function createAmbient(canvas: HTMLCanvasElement, animate: boolean): Ambi
       requestDraw = null
       window.removeEventListener('resize', resize)
       window.removeEventListener('pointermove', onMove)
+      window.removeEventListener('touchmove', onTouch)
       gsap.ticker.remove(tick)
     },
   }
