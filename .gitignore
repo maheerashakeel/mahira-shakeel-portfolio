@@ -1,0 +1,14 @@
+node_modules
+dist
+.env
+.env.*
+!.env.example
+*.local
+.vercel
+.DS_Store
+Thumbs.db
+
+# private, never public
+.private-assets
+NEXT_SESSION.md
+PRODUCT.md
