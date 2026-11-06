@@ -1049,3 +1049,76 @@ svg[data-mood='excited'] {
     height: 46px;
   }
 }
+
+/* Phones: bigger, heavier, brighter text so everything reads at arm's length */
+@media (max-width: 899px) {
+  :root {
+    --small: 14.5px;
+    --body: 17px;
+    --soft: rgba(244, 241, 234, 0.92);
+  }
+  body {
+    font-weight: 450;
+    line-height: 1.5;
+  }
+  .backdrop::after {
+    background: rgba(7, 7, 8, 0.56);
+  }
+  .hero__text p,
+  .proj__text p,
+  .about__me p,
+  .contact__say p,
+  .demo__text p {
+    color: var(--text);
+    font-size: var(--body);
+    text-shadow: 0 1px 10px rgba(0, 0, 0, 0.55);
+  }
+  .proj__text .credit,
+  .demo__text .credit {
+    font-size: 15px;
+    color: var(--soft);
+  }
+  .hero h1,
+  .contact h2 {
+    font-size: 34px;
+  }
+  .proj h2,
+  .apps h2,
+  .demo__text h3 {
+    font-size: 30px;
+  }
+  .about h2 {
+    font-size: 27px;
+  }
+  .nav {
+    font-size: 15px;
+    background: linear-gradient(rgba(7, 7, 8, 0.82), transparent);
+  }
+  .nav nav a {
+    color: var(--text);
+  }
+  .stack li {
+    font-size: 14px;
+    background: rgba(7, 7, 8, 0.62);
+  }
+  .tools h3 {
+    font-size: 16px;
+  }
+  .jobs strong {
+    font-size: 17px;
+  }
+  .app strong {
+    font-size: 19px;
+  }
+  .app__line {
+    font-size: 15.5px;
+    color: var(--text);
+  }
+  .form label span,
+  .form__end p,
+  .foot,
+  .hero__foot,
+  .jobs span {
+    color: var(--text);
+  }
+}

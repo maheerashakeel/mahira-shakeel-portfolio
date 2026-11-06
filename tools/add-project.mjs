@@ -20,7 +20,9 @@ async function capture(url) {
   const context = await browser.newContext({ viewport: { width: 1440, height: 900 }, deviceScaleFactor: 2 })
   const page = await context.newPage()
   await page.goto(url, { waitUntil: 'networkidle', timeout: 60000 })
-  await page.waitForTimeout(3000)
+  // wait for real content: styles applied and visible images finished, not just the first paint
+  await page.waitForFunction(() => document.styleSheets.length > 0 && [...document.images].every(i => i.complete), null, { timeout: 15000 }).catch(() => {})
+  await page.waitForTimeout(5000)
   const shot = await page.screenshot()
   await browser.close()
   return shot
@@ -52,7 +54,8 @@ await sharp(graded)
   .webp({ quality: 74 })
   .toFile(`public/img/world/${id}.webp`)
 
-console.log(`Done. Add this project to src/data/content.ts with:
+console.log(`Check public/img/work/${id}.webp by eye before using it.
+Done. Add this project to src/data/content.ts with:
   shot: '/img/work/${id}.webp',
   world: '/img/world/${id}.webp',
   frame: '${phone ? 'phone' : 'monitor'}',`)
